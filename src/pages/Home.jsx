@@ -1,15 +1,20 @@
-import React from 'react'
-import styled from 'styled-components'
-import TableDisplay from '../components/table'
+import React from "react";
+import styled from "styled-components";
+import TableDisplay from "../components/table";
+import ViewTable from "../blocks/viewTable";
 
-const Container = styled.div``
+const Container = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+`;
 
 const Home = () => {
-    return (
-        <Container>
-        <TableDisplay />
-        </Container>
-    )
-    };
+  return (
+    <Container>
+      <ViewTable />
+    </Container>
+  );
+};
 
 export default Home;
