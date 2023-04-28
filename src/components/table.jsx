@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Popup from "./popup";
 
 const Container = styled.div`
   display: flex;
@@ -13,18 +14,36 @@ const Table = styled.table`
   width: 100%;
   max-width: 1000px;
   margin-bottom: 20px;
+  row-gap: 2px;
+  box-shadow: 0px 0px 5px 2px rgba(0,0,0, 0.35);
+  border-color: rgba(0,0,0, 0.3);
+  border-width: 1px;
+  border-radius: 10px;
+  
 `;
 
 const TableHeader = styled.th`
-  background-color: #ccc;
+  background-color: #09ff0052;
   text-align: left;
   padding: 10px;
 `;
 
 const TableRow = styled.tr`
+  
   cursor: pointer;
   &:hover {
-    background-color: #eee;
+    transform: scale(1.02);
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0, 0.35);
+    border-color: rgba(0,0,0, 0.3);
+    border-width: 1px;
+    border-radius: 10px;
+  }
+  &:active {
+    transform: scale(1.01);
+    box-shadow: 0px 0px 5px 2px rgba(0,0,0, 0.35);
+    border-color: rgba(0,0,0, 0.3);
+    border-width: 1px;
+    border-radius: 10px;  
   }
 `;
 
@@ -32,98 +51,98 @@ const TableCell = styled.td`
   padding: 10px;
 `;
 
-const Name = styled.h2`
+const Title = styled.h2`
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 5px;
 `;
 
-const Email = styled.p`
+const Result = styled.p`
   font-size: 16px;
 `;
 
-function DataDisplay() {
-  var exampleList = [
-    {
-      id: 1,
-      name: "Potato",
-      gender: "m",
-      email: "john.doe@example.com",
-    },
-    {
-      id: 2,
-      name: "Hun",
-      gender: "m",
-      email: "jane.doe@example.com",
-    },
-    {
-      id: 3,
-      name: "Eman",
-      gender: "m",
-      email: "jane.doe@example.com",
-    },
-    {
-      id: 4,
-      name: "Subz",
-      gender: "m",
-      email: "jane.doe@example.com",
-    },
-    {
-      id: 4,
-      name: "Jei",
-      gender: "m",
-      email: "jane.doe@example.com",
-    },
-  ];
-  const [selectedRow, setSelectedRow] = useState(null);
-
-  const handleRowClick = (id) => {
-    setSelectedRow(id);
-  };
-
-  return (
-    <Container>
-      <Table>
-        <thead>
-          <tr>
-            <TableHeader>ID</TableHeader>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Gender</TableHeader>
-            <TableHeader>Email</TableHeader>
-            <TableHeader>Phone</TableHeader>
-          </tr>
-        </thead>
-        <tbody>
-          {exampleList.map((item) => (
-            <TableRow
-              key={item.id}
-              onClick={() => handleRowClick(item.id)}
-              selected={selectedRow === item.id}
-            >
-              <TableCell>
-                <Name>{item.id}</Name>
-              </TableCell>
-              <TableCell>
-                <Name>{item.name}</Name>
-              </TableCell>
-              <TableCell>
-                <Name>{item.gender}</Name>
-              </TableCell>
-              <TableCell>
-                <Email>{item.email}</Email>
-              </TableCell>
-            </TableRow>
-          ))}
-        </tbody>
-      </Table>
-      {selectedRow && (
-        <div>
-          <Name>{exampleList[selectedRow - 1].name}</Name>
-          <Email>{exampleList[selectedRow - 1].email}</Email>
-        </div>
-      )}
-    </Container>
-  );
-}
-
-export default DataDisplay;
+function TableDisplay() {
+    var exampleList = [
+      {
+        id: 1,
+        Test: "Initial AT",
+        Date: "m",
+        Result: true,
+      },
+      {
+        id: 2,
+        Test: "Final AT",
+        Date: "m",
+        Result: false,
+      },
+      {
+        id: 3,
+        Test: "Initial CNS",
+        Date: "m",
+        Result: false,
+      },
+      {
+        id: 4,
+        Test: "CNS",
+        Date: "m",
+        Result: true,
+      },
+      {
+        id: 5,
+        Test: "BS",
+        Date: "m",
+        Result: true,
+      },
+    ];
+    const fields = Object.keys(exampleList[0]);
+  
+    const [selectedRow, setSelectedRow] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
+  
+    const handleRowClick = (id) => {
+      setSelectedRow(id);
+      setShowPopup(true);
+    };
+  
+    const closePopup = () => {
+      setShowPopup(false);
+    };
+  
+    return (
+      <Container>
+        <Table>
+          <thead>
+            <tr>
+              {fields.map((field) => (
+                <TableHeader key={field}>{field.toUpperCase()}</TableHeader>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {exampleList.map((item) => (
+              <TableRow
+                key={item.id}
+                onClick={() => handleRowClick(item.id)}
+                selected={selectedRow === item.id}
+              >
+                {fields.map((field) => (
+                  <TableCell key={`${item.id}-${field}`}>
+                    <Title>{item[field]}</Title>
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </tbody>
+        </Table>
+        {showPopup && (
+            <Popup isOpen={showPopup} togglePopup={closePopup}>
+                <Title>{exampleList[selectedRow - 1].Test}</Title>
+                <Result>{exampleList[selectedRow - 1].Result}</Result>  
+            </Popup>
+        )}
+      </Container>
+    );
+  }
+  
+  export default TableDisplay;
+  
