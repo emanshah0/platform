@@ -25,7 +25,7 @@ const Container = styled.div`
 const Content = styled.div`
   padding: 20px;
   border-radius: 5px;
-  box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.35);
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
   position: relative;
 `;
 
@@ -36,6 +36,7 @@ const CloseButton = styled.button`
   background-color: rgba(255, 0, 0, 0.6);
   border: none;
   border-radius: 5px;
+  box-shadow: 0px 0px 4px 2px rgba(0, 0, 0, 0.35);
   cursor: pointer;
 `;
 

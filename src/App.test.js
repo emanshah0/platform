@@ -16,3 +16,5 @@ test("Popup renders", () => {
   const popupElement = screen.getByText(/hello/i);
   expect(popupElement).toBeInTheDocument();
 });
+
+// write test for graph component

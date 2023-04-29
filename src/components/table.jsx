@@ -7,7 +7,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.2);
   border-color: rgba(0, 0, 0, 0);
   border-width: 0px;
   border-radius: 10px;

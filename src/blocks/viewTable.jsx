@@ -7,8 +7,8 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 50px;
-  box-shadow: 0px 0px 5px 2px rgba(255, 255, 255, 0.35);
+  padding: 25px;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
   border-color: rgba(0, 0, 0, 0.3);
   border-width: 1px;
   border-radius: 10px;
@@ -26,7 +26,7 @@ const Table = styled.table`
 `;
 
 const TableHeader = styled.th`
-  background-color: #09ff0052;
+  background-color: #37df0ede;
   text-align: left;
   padding: 10px;
 `;
@@ -35,13 +35,13 @@ const TableRow = styled.tr`
   cursor: pointer;
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.35);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
     border-color: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
   }
   &:active {
     transform: scale(1.01);
-    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.35);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
     border-color: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
   }
@@ -85,7 +85,7 @@ const SerialNumberDisplay = styled.div`
   margin-left: auto;
   row-gap: 2px;
   border-radius: 10px;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(0, 0, 0, 0.3);
   border-width: 1px;
   font-size: 20px;
   font-weight: bold;
@@ -105,29 +105,37 @@ const SerialNumberInput = styled.input`
   font-weight: bold;
   margin-bottom: 5px;
   align-self: flex-start;
+  box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
+  border-color: white;
+  &:focus {
+    outline: none;
+    border-color: #09ff0052;
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+  }
 `;
 
 // button that will be used to submit the serial number
 const SubmitButton = styled.button`
-  color: #fff;
   align-self: flex-start;
   margin-right: auto;
-  background-color: #09ff0052;
+  background-color: #37df0ede;
   border-radius: 10px;
-  border-width: 1px;
+  border-width: 0px;
   padding: 10px;
   font-size: 16px;
   font-weight: bold;
+  box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
   margin-bottom: 5px;
   cursor: pointer;
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.35);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
     border-radius: 10px;
   }
   &:active {
     transform: scale(1.01);
-    box-shadow: 0px 0px 2px 1px rgba(255, 255, 255, 0.35);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
     border-radius: 10px;
   }
 `;
