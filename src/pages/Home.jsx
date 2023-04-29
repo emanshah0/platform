@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import TableDisplay from "../components/table";
 import ViewTable from "../blocks/viewTable";
 
 const Container = styled.div`

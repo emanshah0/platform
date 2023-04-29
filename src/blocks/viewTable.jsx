@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Popup from "../components/popup";
 import TableDisplay from "../components/table";
+import LineGraph from "../components/lineGraph";
 
 const Container = styled.div`
   display: flex;
@@ -179,6 +180,13 @@ function ViewTable() {
   const [serialNumber, setSerialNumber] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const xData = [];
+  const yData = [];
+  for (let i = 0; i <= 360 * 2; i += 10) {
+    xData.push(i);
+    yData.push(Math.sin((i * Math.PI) / 180));
+  }
+
   const handleSerialNumberSubmit = () => {
     setSerialNumber(document.getElementById("serial-number-input").value);
     setIsSubmitted(true);
@@ -245,6 +253,9 @@ function ViewTable() {
             {exampleList[selectedRow - 1].Result.toString().toUpperCase()}
           </FieldCell>
           <FieldCell>{<TableDisplay />}</FieldCell>
+          <FieldCell>
+            <LineGraph xData={xData} yData={yData} />
+          </FieldCell>
         </Popup>
       )}
     </Container>

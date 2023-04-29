@@ -8,7 +8,7 @@ const Container = styled.div`
   width: 100%;
   width: 500px;
   height: 100%;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   transition: opacity 0.5s ease-in-out;
@@ -47,7 +47,7 @@ const Tag = styled.div`
 const Popup = ({ isOpen, togglePopup, children }) => {
   return (
     <>
-      {isOpen && (
+      {isOpen && (  
         <Container>
           <Content>
             <CloseButton onClick={togglePopup}>
