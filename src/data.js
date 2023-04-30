@@ -179,3 +179,36 @@ const mockData = {
 };
 
 export { rows, mockData };
+
+// DATA TEMPLATE
+// // Row template
+// {
+//   id: 1,
+//   Test: "Temperature Test 1",
+//   Date: "2020-01-01",
+//   Result: true,
+// }
+
+// // Mock data template
+// {
+//   1: {
+//     content: [
+//       {
+//         type: "table",
+//         data: {
+//           rows: [ /* insert rows here */ ]
+//         }
+//       },
+//       {
+//         type: "linegraph",
+//         data: {
+//           xData: [ /* insert x data here */ ],
+//           yData: [ /* insert y data here */ ],
+//           title: "Title"
+//         }
+//       },
+//       // add more types of data as necessary
+//     ]
+//   },
+//   // add more data entries as necessary
+// }

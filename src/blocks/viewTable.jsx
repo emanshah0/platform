@@ -142,20 +142,15 @@ const SubmitButton = styled.button`
   }
 `;
 
-function ViewTable({ rows, data }) {
+function ViewTable({ mockData }) {
+  const { serial_number, part_number, rows } = mockData;
+
   const fields = Object.keys(rows[0]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const [serialNumber, setSerialNumber] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleSerialNumberSubmit = () => {
-    setSerialNumber(document.getElementById("serial-number-input").value);
-    setIsSubmitted(true);
-  };
 
   const handleRowClick = (id) => {
-    setSelectedRow(id);
+    setSelectedRow(id-1);
     setShowPopup(true);
   };
 
@@ -166,16 +161,8 @@ function ViewTable({ rows, data }) {
   return (
     <Container>
       <Header>
-        <Title>Serial Number: </Title>
-        <SerialNumberInput
-          id="serial-number-input"
-          type="text"
-          defaultValue={serialNumber}
-        />
-        <SubmitButton onClick={handleSerialNumberSubmit}>Submit</SubmitButton>
-        {isSubmitted && (
-          <SerialNumberDisplay>{serialNumber}</SerialNumberDisplay>
-        )}
+        <Title>Serial Number: {serial_number}</Title>
+        <Title>Part Number: {part_number}</Title>
       </Header>
       <Table>
         <thead>
@@ -205,7 +192,7 @@ function ViewTable({ rows, data }) {
       </Table>
       {showPopup && (
         <Popup isOpen={showPopup} togglePopup={closePopup}>
-          {data[selectedRow]?.content.map((item, index) => {
+          {rows[selectedRow - 1]?.content.map((item, index) => {
             if (item.type === "linegraph") {
               return (
                 <LineGraph
