@@ -4,6 +4,7 @@ import Popup from "./popup";
 
 const Container = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   padding: 20px;
@@ -11,8 +12,6 @@ const Container = styled.div`
   border-color: rgba(0, 0, 0, 0);
   border-width: 0px;
   border-radius: 10px;
-  min-width: 300px;
-  max-width: 600px;
   margin: 1 0px;
 `;
 
@@ -50,43 +49,15 @@ const Title = styled.h2`
 const FieldCell = styled.div`
   font-size: 16px;
 `;
-
-function TableDisplay() {
-  var exampleList = [
-    {
-      id: 1,
-      Test: "PARAMETER 1",
-      Value: "[Some Value]",
-      Result: true,
-    },
-    {
-      id: 2,
-      Test: "PARAMETER 2",
-      Value: "[Some Value]",
-      Result: false,
-    },
-    {
-      id: 3,
-      Test: "PARAMETER 3",
-      Value: "[Some Value]",
-      Result: false,
-    },
-    {
-      id: 4,
-      Test: "PARAMETER 4",
-      Value: "[Some Value]",
-      Result: true,
-    },
-    {
-      id: 5,
-      Test: "PARAMETER 5",
-      Value: "[Some Value]",
-      Result: true,
-    },
-  ];
-  const fields = Object.keys(exampleList[0]).filter((field) => field !== "id");
-
+function TableDisplay({ content }) {
   const [selectedRow, setSelectedRow] = useState(null);
+
+  if (!content || content.type !== "table" || content.data.rows.length === 0) {
+    return <div>No data available</div>;
+  }
+
+  const tableData = content.data.rows;
+  const fields = Object.keys(tableData[0]).filter((field) => field !== "id");
 
   const handleRowClick = (id) => {
     setSelectedRow(id);
@@ -103,7 +74,7 @@ function TableDisplay() {
           </tr>
         </thead>
         <tbody>
-          {exampleList.map((item) => (
+          {tableData.map((item) => (
             <TableRow
               key={item.id}
               onClick={() => handleRowClick(item.id)}

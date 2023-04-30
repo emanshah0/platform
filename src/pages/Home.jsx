@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import ViewTable from "../blocks/viewTable";
+import { rows, mockData } from "../data";
 
 const Container = styled.div`
   width: 100%;
@@ -11,7 +12,7 @@ const Container = styled.div`
 const Home = () => {
   return (
     <Container>
-      <ViewTable />
+      <ViewTable rows={rows} data={mockData} />
     </Container>
   );
 };

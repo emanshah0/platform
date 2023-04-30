@@ -1,10 +1,16 @@
 import React, { useRef, useEffect } from "react";
-import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
+import styled from "styled-components";
 
 Chart.register(...registerables);
 
-function LineGraph({ xData, yData }) {
+const Container = styled.div`
+  position: relative;
+  width: 100%;
+  padding: 10px;
+`;
+
+function LineGraph({ xData, yData, title }) {
   const chartRef = useRef(null);
 
   useEffect(() => {
@@ -37,14 +43,14 @@ function LineGraph({ xData, yData }) {
   }, [xData, yData]);
 
   return (
-    <div>
-      <h2>Line Graph</h2>
+    <Container>
+      <h2>{title}</h2>
       <canvas
         ref={(ref) => (chartRef.current = ref)}
-        width={600}
-        height={400}
+        width={100}
+        height={50}
       ></canvas>
-    </div>
+    </Container>
   );
 }
 

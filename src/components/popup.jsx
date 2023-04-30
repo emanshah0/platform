@@ -5,13 +5,11 @@ const Container = styled.div`
   position: relative;
   top: 0;
   left: 0;
-  width: 100%;
-  width: 500px;
   height: 100%;
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   &.fade-enter-active {
     opacity: 1;
   }
@@ -23,10 +21,16 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  padding: 20px;
+  max-width: 800px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
   border-radius: 5px;
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.35);
-  position: relative;
+  flex-shrink: 0;
 `;
 
 const CloseButton = styled.button`
@@ -47,7 +51,7 @@ const Tag = styled.div`
 const Popup = ({ isOpen, togglePopup, children }) => {
   return (
     <>
-      {isOpen && (  
+      {isOpen && (
         <Container>
           <Content>
             <CloseButton onClick={togglePopup}>

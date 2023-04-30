@@ -14,7 +14,7 @@ const Container = styled.div`
   border-width: 1px;
   border-radius: 10px;
   min-width: 400px;
-  max-width: 1200px;
+  max-width: 1080px;
 `;
 
 const Table = styled.table`
@@ -61,9 +61,10 @@ const Title = styled.h2`
 `;
 
 // component that will display a field in the table
-const FieldCell = styled.div`
+const FieldCell = styled.h2`
+  width: 100%;
   font-size: 16px;
-  padding-bottom: 15px;
+  padding-right: 20px;
 `;
 
 // component that will display a header above the top  of the table
@@ -141,51 +142,12 @@ const SubmitButton = styled.button`
   }
 `;
 
-function ViewTable() {
-  var exampleList = [
-    {
-      id: 1,
-      Test: "Initial AT",
-      Date: "2019-12-04",
-      Result: true,
-    },
-    {
-      id: 2,
-      Test: "Final AT",
-      Date: "2019-12-04",
-      Result: false,
-    },
-    {
-      id: 3,
-      Test: "Initial CNS",
-      Date: "2019-12-04",
-      Result: false,
-    },
-    {
-      id: 4,
-      Test: "CNS",
-      Date: "2019-12-04",
-      Result: true,
-    },
-    {
-      id: 5,
-      Test: "BS",
-      Date: "2019-12-04",
-      Result: true,
-    },
-  ];
-  const fields = Object.keys(exampleList[0]);
+function ViewTable({ rows, data }) {
+  const fields = Object.keys(rows[0]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [serialNumber, setSerialNumber] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const xData = [];
-  const yData = [];
-  for (let i = 0; i <= 360 * 2; i += 10) {
-    xData.push(i);
-    yData.push(Math.sin((i * Math.PI) / 180));
-  }
 
   const handleSerialNumberSubmit = () => {
     setSerialNumber(document.getElementById("serial-number-input").value);
@@ -224,20 +186,16 @@ function ViewTable() {
           </tr>
         </thead>
         <tbody>
-          {exampleList.map((item) => (
-            <TableRow
-              key={item.id}
-              onClick={() => handleRowClick(item.id)}
-              selected={selectedRow === item.id}
-            >
-              {fields.map((field) => (
-                <TableCell key={`${item.id}-${field}`}>
-                  {field === "Result" ? (
-                    <Title style={{ color: item[field] ? "green" : "red" }}>
-                      {item[field].toString().toUpperCase()}
+          {rows.map((item) => (
+            <TableRow key={item.id} onClick={() => handleRowClick(item.id)}>
+              {Object.keys(item).map((key) => (
+                <TableCell key={`${item.id}-${key}`}>
+                  {key === "Result" ? (
+                    <Title style={{ color: item[key] ? "green" : "red" }}>
+                      {item[key].toString().toUpperCase()}
                     </Title>
                   ) : (
-                    <Title>{item[field]}</Title>
+                    <Title>{item[key]}</Title>
                   )}
                 </TableCell>
               ))}
@@ -247,19 +205,25 @@ function ViewTable() {
       </Table>
       {showPopup && (
         <Popup isOpen={showPopup} togglePopup={closePopup}>
-          <Title>{exampleList[selectedRow - 1].Test}</Title>
-          <FieldCell>{exampleList[selectedRow - 1].Date}</FieldCell>
-          <FieldCell>
-            {exampleList[selectedRow - 1].Result.toString().toUpperCase()}
-          </FieldCell>
-          <FieldCell>{<TableDisplay />}</FieldCell>
-          <FieldCell>
-            <LineGraph xData={xData} yData={yData} />
-          </FieldCell>
+          {data[selectedRow]?.content.map((item, index) => {
+            if (item.type === "linegraph") {
+              return (
+                <LineGraph
+                  key={index}
+                  xData={item.data.xData}
+                  yData={item.data.yData}
+                  title={item.data.title}
+                />
+              );
+            } else if (item.type === "table") {
+              return <TableDisplay key={index} content={item} />;
+            } else {
+              return null;
+            }
+          })}
         </Popup>
       )}
     </Container>
   );
 }
-
 export default ViewTable;
