@@ -47,8 +47,7 @@ function LineGraph({ xData, yData, title }) {
       <h2>{title}</h2>
       <canvas
         ref={(ref) => (chartRef.current = ref)}
-        width={100}
-        height={50}
+        style={{ height: "100px", width: "50px" }}
       ></canvas>
     </Container>
   );

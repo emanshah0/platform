@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Popup from "../components/popup";
 import TableDisplay from "../components/table";
@@ -142,15 +142,28 @@ const SubmitButton = styled.button`
   }
 `;
 
-function ViewTable({ mockData }) {
-  const { serial_number, part_number, rows } = mockData;
-
+function ViewTable({ packet }) {
+  const rows = packet.rows;
+  const data = packet.data;
+  console.log(Object.keys(rows[0]));
   const fields = Object.keys(rows[0]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [serialNumber, setSerialNumber] = useState("");
+  const [partNumber, setPartNumber] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  useEffect(() => {
+    setSerialNumber(packet.serialNumber);
+    setPartNumber(packet.partNumber);
+  }, [packet]);
+
+  const handleSerialNumberSubmit = () => {
+    setSerialNumber(document.getElementById("serial-number-input").value);
+    setIsSubmitted(true);
+  };
 
   const handleRowClick = (id) => {
-    setSelectedRow(id-1);
+    setSelectedRow(id);
     setShowPopup(true);
   };
 
@@ -161,8 +174,16 @@ function ViewTable({ mockData }) {
   return (
     <Container>
       <Header>
-        <Title>Serial Number: {serial_number}</Title>
-        <Title>Part Number: {part_number}</Title>
+        <Title>Serial Number: </Title>
+        <SerialNumberInput
+          id="serial-number-input"
+          type="text"
+          defaultValue={serialNumber}
+        />
+        <SubmitButton onClick={handleSerialNumberSubmit}>Submit</SubmitButton>
+        {isSubmitted && (
+          <SerialNumberDisplay>{serialNumber}</SerialNumberDisplay>
+        )}
       </Header>
       <Table>
         <thead>
@@ -192,7 +213,7 @@ function ViewTable({ mockData }) {
       </Table>
       {showPopup && (
         <Popup isOpen={showPopup} togglePopup={closePopup}>
-          {rows[selectedRow - 1]?.content.map((item, index) => {
+          {data[selectedRow]?.content.map((item, index) => {
             if (item.type === "linegraph") {
               return (
                 <LineGraph

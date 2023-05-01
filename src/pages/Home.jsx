@@ -18,16 +18,11 @@ const Home = () => {
       const fetchedData = await FetchData();
       setData(fetchedData);
     }
-  
+
     getData();
   }, []);
-  
 
-  return (
-    <Container>
-      {data && <ViewTable data={data} />}
-    </Container>
-  );
+  return <Container>{data && <ViewTable packet={data} />}</Container>;
 };
 
 export default Home;
