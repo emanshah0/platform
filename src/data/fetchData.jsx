@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_ENDPOINT = "http://127.0.0.1:5000";
+const API_ENDPOINT = "http://127.0.0.1:5000/api";
 
 async function FetchData() {
   try {

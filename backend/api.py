@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from bench import DataFactory, generate_test_data
 
 app = Flask(__name__)
 CORS(app)
@@ -14,13 +15,6 @@ def get_data():
             'Date': "2020-10-10",
             'Result': True
         },
-        {
-            'id': 2,
-            'Test': 'Humidity',
-            'Date': "2020-10-13",
-            'Result': True
-        },
-
     ]
 
     data = {
@@ -34,29 +28,6 @@ def get_data():
                                 'id': 1,
                                 'Test': 'Temperature Test 1',
                                 'Date': '2020-01-01',
-                                'Result': True
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        2: {
-            'content': [
-                {
-                    'type': 'table',
-                    'data': {
-                        'rows': [
-                            {
-                                'id': 1,
-                                'Test': 'Humidity Test 1',
-                                'Date': '2020-02-15',
-                                'Result': True
-                            },
-                            {
-                                'id': 2,
-                                'Test': 'Humidity Test 2',
-                                'Date': '2020-02-25',
                                 'Result': True
                             }
                         ]
@@ -77,12 +48,20 @@ def get_data():
                     },
                 },
             ]
-        },
+        }
     }
     packet = {'rows': rows, 'data': data,
               'serial_number': '123456789', 'part_number': '123456789'}
     return jsonify(packet)
 
 
+@app.route('/api/data', methods=['GET'])
+def get_api():
+    data_factory = DataFactory()
+    test_data = generate_test_data(data_factory, 10)
+    return jsonify(test_data)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+    
