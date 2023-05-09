@@ -43,13 +43,16 @@ const DropdownListItem = styled.li`
 function Dropdown(props) {
   const { options, defaultOption, onChange } = props;
 
+  if (!options) {
+    return null; // or some other default value or placeholder
+  }
+
   const [selectedOption, setSelectedOption] = 
 React.useState(defaultOption);
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     onChange(option);
-    // Set a new variable to the selected option
     const selectedValue = option;
     console.log("Selected value:", selectedValue);
   };
@@ -70,4 +73,33 @@ React.useState(defaultOption);
     </DropdownContainer>
   );
 }
+
+export default Dropdown;
+
+import React from "react";
+import Dropdown from "./Dropdown";
+
+function App() {
+  const options = ["Option 1", "Option 2", "Option 3"];
+  const defaultOption = options[0];
+
+  const [selectedValue, setSelectedValue] = React.useState(defaultOption);
+
+  const handleOptionChange = (option) => {
+    setSelectedValue(option);
+  };
+
+  return (
+    <div>
+      <Dropdown
+        options={options}
+        defaultOption={defaultOption}
+        onChange={handleOptionChange}
+      />
+      <p>Selected value: {selectedValue}</p>
+    </div>
+  );
+}
+
+export default App;
 
