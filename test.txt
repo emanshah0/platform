@@ -1,0 +1,73 @@
+import React from "react";
+import styled from "styled-components";
+
+const DropdownContainer = styled.div`
+  display: inline-block;
+  position: relative;
+  font-size: 1rem;
+`;
+
+const DropdownButton = styled.button`
+  background-color: #0077cc;
+  color: #ffffff;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+`;
+
+const DropdownList = styled.ul`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #d4d4d4;
+  border-radius: 0.25rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1;
+`;
+
+const DropdownListItem = styled.li`
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #f4f4f4;
+  }
+`;
+
+function Dropdown(props) {
+  const { options, defaultOption, onChange } = props;
+
+  const [selectedOption, setSelectedOption] = 
+React.useState(defaultOption);
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    onChange(option);
+    // Set a new variable to the selected option
+    const selectedValue = option;
+    console.log("Selected value:", selectedValue);
+  };
+
+  return (
+    <DropdownContainer>
+      <DropdownButton>{selectedOption}</DropdownButton>
+      <DropdownList>
+        {options.map((option) => (
+          <DropdownListItem
+            key={option}
+            onClick={() => handleOptionClick(option)}
+          >
+            {option}
+          </DropdownListItem>
+        ))}
+      </DropdownList>
+    </DropdownContainer>
+  );
+}
+

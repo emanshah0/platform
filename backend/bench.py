@@ -67,6 +67,7 @@ def generate_test_data(factory, num_entries):
         row = factory.generate_row(i, test_title, test_date, test_result)
         factory.add_row(row)
 
+        
         table_content = factory.generate_table_content([row])
         linegraph_content = factory.generate_linegraph_content(
             [random.random() for _ in range(10)],
