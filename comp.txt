@@ -1,0 +1,74 @@
+import React from "react";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: inline-block;
+  position: relative;
+`;
+
+const Button = styled.button`
+  background-color: #0077cc;
+  color: #ffffff;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+`;
+
+const List = styled.ul`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #d4d4d4;
+  border-radius: 0.25rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  z-index: 1;
+  display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+`;
+
+const ListItem = styled.li`
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  &:hover {
+    background-color: #f4f4f4;
+  }
+`;
+
+function Dropdown({ options, onChange }) {
+  const [selectedOption, setSelectedOption] = React.useState(null);
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const handleButtonClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleOptionClick = (option) => {
+    setSelectedOption(option);
+    onChange(option);
+    setIsOpen(false);
+  };
+
+  return (
+    <Container>
+      <Button onClick={handleButtonClick}>{selectedOption || "Select an 
+option"}</Button>
+      <List isOpen={isOpen}>
+        {options.map((option) => (
+          <ListItem key={option} onClick={() => 
+handleOptionClick(option)}>
+            {option}
+          </ListItem>
+        ))}
+      </List>
+    </Container>
+  );
+}
+
+export default Dropdown;
+
