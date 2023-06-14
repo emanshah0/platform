@@ -1,41 +1,170 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 
-const SpinnerAnimation = keyframes`
-  to {
-    transform: rotate(360deg);
+const InputGroup = styled.div`
+  margin-bottom: 10px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 5px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+`;
+
+const TextInput = ({ label, value, onChange }) => (
+  <InputGroup>
+    <Label>{label}</Label>
+    <Input type="text" value={value} onChange={onChange} />
+  </InputGroup>
+);
+
+export default TextInput;
+
+######################
+
+import React from 'react';
+import styled from 'styled-components';
+
+const InputGroup = styled.div`
+  margin-bottom: 10px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 5px;
+`;
+
+const Button = styled.button`
+  padding: 5px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  
+  &.active {
+    background-color: #4CAF50;
+    color: white;
   }
 `;
 
-const LoadingContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+const BooleanInput = ({ label, value, onChange }) => (
+  <InputGroup>
+    <Label>{label}</Label>
+    <Button onClick={() => onChange(true)} className={value ? 'active' : ''}>Pass</Button>
+    <Button onClick={() => onChange(false)} className={!value ? 'active' : ''}>Fail</Button>
+  </InputGroup>
+);
+
+export default BooleanInput;
+
+##############################
+
+import React, { useState, useCallback } from 'react';
+import styled from 'styled-components';
+import TextInput from './TextInput';
+import BooleanInput from './BooleanInput';
+
+const FormElement = styled.form`
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 `;
 
-const LoadingSpinner = styled.div`
-  width: 50px;
-  height: 50px;
-  border: 5px solid #ccc;
-  border-top-color: #3498db;
-  border-radius: 50%;
-  animation: ${SpinnerAnimation} 1s ease-in-out infinite;
-  margin-right: 10px;
+const SubmitButton = styled.button`
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
 `;
 
-const LoadingText = styled.div`
-  font-size: 20px;
-  font-weight: bold;
-`;
+const Form = ({ questions, onSubmit }) => {
+  const [technician, setTechnician] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
+  const [responses, setResponses] = useState({});
 
-function Loading() {
+  const handleSubmit = useCallback((event) => {
+    event.preventDefault();
+    const data = {
+      technician,
+      serialNumber,
+      date: new Date().toISOString(),
+      responses,
+    };
+    onSubmit(data);
+  }, [technician, serialNumber, responses, onSubmit]);
+
+  const handleResponseChange = useCallback((key, value) => {
+    setResponses((prevResponses) => ({
+      ...prevResponses,
+      [key]: value,
+    }));
+  }, []);
+
   return (
-    <LoadingContainer>
-      <LoadingSpinner />
-      <LoadingText>Loading...</LoadingText>
-    </LoadingContainer>
-  );
-}
+    <FormElement onSubmit={handleSubmit}>
+      <TextInput label="Technician" value={technician} onChange={(e) => setTechnician(e.target.value)} />
+      <TextInput label="Serial Number" value={serialNumber} onChange={(e) => setSerialNumber(e.target.value)} />
+      
+      {questions.map((question, index) => {
+        switch (question.type) {
+          case 'boolean':
+            return (
+              <BooleanInput
+                key={index}
+                label={question.label}
+                value={responses[question.key]}
+                onChange={(value) => handleResponseChange(question.key, value)}
+              />
+            );
+          // Add more input types if necessary
+          default:
+            return null;
+        }
+      })}
 
-export default Loading;
+      <SubmitButton type="submit">Submit</SubmitButton>
+    </FormElement>
+  );
+};
+
+export default Form;
+
+############
+
+import React from 'react';
+import styled from 'styled-components';
+import Form from './components/Form';
+
+const AppContainer = styled.div`
+  padding: 20px;
+`;
+
+const App = () => {
+  const questions = [
+    {
+      key: 'q1',
+      label: 'Is the device functional?',
+      type: 'boolean',
+    },
+    // Add more questions...
+  ];
+
+  const handleFormSubmit = (data) => {
+    console.log("Form Data Submitted:", data);
+    // You can handle form submission here, such as sending data to an API.
+  }
+
+  return (
+    <AppContainer>
+      <Form questions={questions} onSubmit={handleFormSubmit} />
+    </AppContainer>
+  );
+};
+
+export default App;
