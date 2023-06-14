@@ -1,52 +1,100 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import BooleanInput from './BooleanInput';
+import TextInput from './TextInput';
+import FloatInput from './FloatInput';
+import IntegerInput from './IntegerInput';
 
-const InputWrapper = styled.div`
-  margin: 10px;
+const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const InputRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+`;
+
+const Input = styled.input`
+  margin: 0 10px;
 `;
 
 const Label = styled.label`
-  margin-right: 10px;
+  margin: 10px;
 `;
 
-const Button = styled.button`
-  margin-left: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  background-color: ${(props) => (props.selected ? (props.value ? 'green' : 'red') : 'white')};
-  color: ${(props) => (props.selected ? 'white' : 'black')};
-  border: 1px solid ${(props) => (props.value ? 'green' : 'red')};
-`;
+const CustomForm = ({ questions, onSubmit }) => {
+  const [formData, setFormData] = useState({ date: new Date().toISOString() });
 
-const BooleanInput = ({ name, label, onChange }) => {
-  const [selectedValue, setSelectedValue] = useState(null);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  const handleClick = (value) => {
-    setSelectedValue(value);
-    onChange({ target: { name, value } });
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
   };
 
   return (
-    <InputWrapper>
-      <Label htmlFor={name}>{label}:</Label>
-      <Button
-        type="button"
-        value={true}
-        selected={selectedValue === true}
-        onClick={() => handleClick(true)}
-      >
-        Pass
-      </Button>
-      <Button
-        type="button"
-        value={false}
-        selected={selectedValue === false}
-        onClick={() => handleClick(false)}
-      >
-        Fail
-      </Button>
-    </InputWrapper>
+    <FormWrapper onSubmit={handleSubmit}>
+      <InputRow>
+        <Label htmlFor="technician">Technician:</Label>
+        <Input type="text" name="technician" onChange={handleChange} />
+
+        <Label htmlFor="serialNumber">Serial Number:</Label>
+        <Input type="text" name="serialNumber" onChange={handleChange} />
+      </InputRow>
+
+      {questions.map((question, index) => {
+        switch (question.type) {
+          case 'boolean':
+            return (
+              <BooleanInput
+                key={index}
+                name={question.name}
+                label={question.label}
+                onChange={handleChange}
+              />
+            );
+          case 'text':
+            return (
+              <TextInput
+                key={index}
+                name={question.name}
+                label={question.label}
+                onChange={handleChange}
+              />
+            );
+          case 'float':
+            return (
+              <FloatInput
+                key={index}
+                name={question.name}
+                label={question.label}
+                onChange={handleChange}
+              />
+            );
+          case 'integer':
+            return (
+              <IntegerInput
+                key={index}
+                name={question.name}
+                label={question.label}
+                onChange={handleChange}
+              />
+            );
+          default:
+            return null;
+        }
+      })}
+
+      <Input type="submit" value="Submit" />
+    </FormWrapper>
   );
 };
 
-export default BooleanInput;
+export default CustomForm;
