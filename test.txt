@@ -1,276 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const BooleanWrapper = styled.div`
-  display: flex;
-  align-items: center;
+const InputWrapper = styled.div`
   margin: 10px;
 `;
 
+const Label = styled.label`
+  margin-right: 10px;
+`;
+
 const Button = styled.button`
-  margin: 5px;
+  margin-left: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: ${(props) => (props.selected ? (props.value ? 'green' : 'red') : 'white')};
+  color: ${(props) => (props.selected ? 'white' : 'black')};
+  border: 1px solid ${(props) => (props.value ? 'green' : 'red')};
 `;
 
 const BooleanInput = ({ name, label, onChange }) => {
-  const handleBooleanChange = (value) => {
-    onChange({
-      target: {
-        name,
-        value,
-      },
-    });
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  const handleClick = (value) => {
+    setSelectedValue(value);
+    onChange({ target: { name, value } });
   };
 
   return (
-    <BooleanWrapper>
-      <span>{label}: </span>
-      <Button onClick={() => handleBooleanChange(true)}>Pass</Button>
-      <Button onClick={() => handleBooleanChange(false)}>Fail</Button>
-    </BooleanWrapper>
+    <InputWrapper>
+      <Label htmlFor={name}>{label}:</Label>
+      <Button
+        type="button"
+        value={true}
+        selected={selectedValue === true}
+        onClick={() => handleClick(true)}
+      >
+        Pass
+      </Button>
+      <Button
+        type="button"
+        value={false}
+        selected={selectedValue === false}
+        onClick={() => handleClick(false)}
+      >
+        Fail
+      </Button>
+    </InputWrapper>
   );
 };
 
 export default BooleanInput;
-
-#################################
-
-
-import React from 'react';
-import styled from 'styled-components';
-
-const InputWrapper = styled.div`
-  margin: 10px;
-`;
-
-const Label = styled.label`
-  margin-right: 10px;
-`;
-
-const Input = styled.input`
-  margin-left: 5px;
-`;
-
-const TextInput = ({ name, label, onChange }) => {
-  return (
-    <InputWrapper>
-      <Label htmlFor={name}>{label}:</Label>
-      <Input type="text" name={name} onChange={onChange} />
-    </InputWrapper>
-  );
-};
-
-export default TextInput;
-
-#################################
-
-
-import React from 'react';
-import styled from 'styled-components';
-
-const InputWrapper = styled.div`
-  margin: 10px;
-`;
-
-const Label = styled.label`
-  margin-right: 10px;
-`;
-
-const Input = styled.input`
-  margin-left: 5px;
-`;
-
-const FloatInput = ({ name, label, onChange }) => {
-  return (
-    <InputWrapper>
-      <Label htmlFor={name}>{label}:</Label>
-      <Input type="number" step="any" name={name} onChange={onChange} />
-    </InputWrapper>
-  );
-};
-
-export default FloatInput;
-
-#################################
-
-
-import React from 'react';
-import styled from 'styled-components';
-
-const InputWrapper = styled.div`
-  margin: 10px;
-`;
-
-const Label = styled.label`
-  margin-right: 10px;
-`;
-
-const Input = styled.input`
-  margin-left: 5px;
-`;
-
-const IntegerInput = ({ name, label, onChange }) => {
-  return (
-    <InputWrapper>
-      <Label htmlFor={name}>{label}:</Label>
-      <Input type="number" name={name} onChange={onChange} />
-    </InputWrapper>
-  );
-};
-
-export default IntegerInput;
-
-#################################
-
-
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import BooleanInput from './BooleanInput';
-import TextInput from './TextInput';
-import FloatInput from './FloatInput';
-import IntegerInput from './IntegerInput';
-
-const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Input = styled.input`
-  margin: 10px;
-`;
-
-const Label = styled.label`
-  margin: 10px;
-`;
-
-const CustomForm = ({ questions, onSubmit }) => {
-  const [formData, setFormData] = useState({ date: new Date().toISOString() });
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
-
-  return (
-    <FormWrapper onSubmit={handleSubmit}>
-      <Label htmlFor="technician">Technician:</Label>
-      <Input type="text" name="technician" onChange={handleChange} />
-
-      <Label htmlFor="serialNumber">Serial Number:</Label>
-      <Input type="text" name="serialNumber" onChange={handleChange} />
-
-      {questions.map((question, index) => {
-        switch (question.type) {
-          case 'boolean':
-            return (
-              <BooleanInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          case 'text':
-            return (
-              <TextInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          case 'float':
-            return (
-              <FloatInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          case 'integer':
-            return (
-              <IntegerInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          default:
-            return null;
-        }
-      })}
-
-      <Input type="submit" value="Submit" />
-    </FormWrapper>
-  );
-};
-
-export default CustomForm;
-
-#################################
-
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import CustomForm from './CustomForm';
-import { form1 } from '../forms/form1';
-import { form2 } from '../forms/form2';
-
-const ButtonGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 10px;
-  margin-bottom: 20px;
-`;
-
-const Button = styled.button`
-  padding: 10px;
-`;
-
-const ProductionDataFactory = () => {
-  const [selectedForm, setSelectedForm] = useState(null);
-  const forms = [
-    { id: 1, name: 'Form 1', questions: form1 },
-    { id: 2, name: 'Form 2', questions: form2 },
-  ];
-
-  const handleSubmit = (formData) => {
-    console.log('Form data submitted:', formData);
-  };
-
-  return (
-    <div>
-      <ButtonGrid>
-        {forms.map((form) => (
-          <Button key={form.id} onClick={() => setSelectedForm(form.questions)}>
-            {form.name}
-          </Button>
-        ))}
-      </ButtonGrid>
-
-      {selectedForm && <CustomForm questions={selectedForm} onSubmit={handleSubmit} />}
-    </div>
-  );
-};
-
-export default ProductionDataFactory;
-
-#################################
-
-export const form1 = [
-  { type: 'text', name: 'question1', label: 'Form 1: What is your name?' },
-  { type: 'boolean', name: 'question2', label: 'Form 1: Did you understand?' },
-  { type: 'float', name: 'question3', label: 'Form 1: Enter a floating-point number' },
-];
-
-export const form2 = [
-  { type: 'integer', name: 'question1', label: 'Form 2: Enter an integer' },
-  { type: 'text', name: 'question2', label: 'Form 2: What is your favorite color?' },
-];
