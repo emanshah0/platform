@@ -5,23 +5,20 @@ import TextInput from './TextInput';
 import FloatInput from './FloatInput';
 import IntegerInput from './IntegerInput';
 
-const FormWrapper = styled.div`
+const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
 `;
 
-const InputRow = styled.div`
+const InputGroup = styled.div`
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   margin: 10px 0;
 `;
 
-const Input = styled.input`
-  margin: 0 10px;
-`;
-
 const Label = styled.label`
-  margin: 10px;
+  width: 150px; // You can adjust this width to your preference
+  margin-right: 10px;
 `;
 
 const CustomForm = ({ questions, onSubmit }) => {
@@ -41,58 +38,59 @@ const CustomForm = ({ questions, onSubmit }) => {
 
   return (
     <FormWrapper onSubmit={handleSubmit}>
-      <InputRow>
+      <InputGroup>
         <Label htmlFor="technician">Technician:</Label>
-        <Input type="text" name="technician" onChange={handleChange} />
+        <TextInput name="technician" onChange={handleChange} />
+      </InputGroup>
 
+      <InputGroup>
         <Label htmlFor="serialNumber">Serial Number:</Label>
-        <Input type="text" name="serialNumber" onChange={handleChange} />
-      </InputRow>
+        <TextInput name="serialNumber" onChange={handleChange} />
+      </InputGroup>
 
       {questions.map((question, index) => {
-        switch (question.type) {
-          case 'boolean':
-            return (
-              <BooleanInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          case 'text':
-            return (
-              <TextInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          case 'float':
-            return (
-              <FloatInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          case 'integer':
-            return (
-              <IntegerInput
-                key={index}
-                name={question.name}
-                label={question.label}
-                onChange={handleChange}
-              />
-            );
-          default:
-            return null;
-        }
+        return (
+          <InputGroup key={index}>
+            <Label htmlFor={question.name}>{question.label}:</Label>
+            {(() => {
+              switch (question.type) {
+                case 'boolean':
+                  return (
+                    <BooleanInput
+                      name={question.name}
+                      onChange={handleChange}
+                    />
+                  );
+                case 'text':
+                  return (
+                    <TextInput
+                      name={question.name}
+                      onChange={handleChange}
+                    />
+                  );
+                case 'float':
+                  return (
+                    <FloatInput
+                      name={question.name}
+                      onChange={handleChange}
+                    />
+                  );
+                case 'integer':
+                  return (
+                    <IntegerInput
+                      name={question.name}
+                      onChange={handleChange}
+                    />
+                  );
+                default:
+                  return null;
+              }
+            })()}
+          </InputGroup>
+        );
       })}
 
-      <Input type="submit" value="Submit" />
+      <input type="submit" value="Submit" />
     </FormWrapper>
   );
 };
