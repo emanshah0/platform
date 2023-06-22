@@ -1,98 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import BooleanInput from './BooleanInput';
-import TextInput from './TextInput';
-import FloatInput from './FloatInput';
-import IntegerInput from './IntegerInput';
 
-const FormWrapper = styled.form`
-  display: flex;
-  flex-direction: column;
+// Scale factor
+const scaleFactor = 0.5;
+
+const Display = styled.div`
+  width: ${1380 * scaleFactor}px;
+  height: ${720 * scaleFactor}px;
+  position: relative;
+  border: 1px solid black;
 `;
 
-const InputGroup = styled.div`
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
+const Mark = styled.div`
+  width: 1px;
+  height: 1px;
+  background-color: red;
+  position: absolute;
+  left: ${props => props.x * scaleFactor}px;
+  top: ${props => props.y * scaleFactor}px;
 `;
 
-const Label = styled.label`
-  width: 150px; // You can adjust this width to your preference
-  margin-right: 10px;
+// This will represent the region of interest
+const Region = styled.div`
+  position: absolute;
+  border: 1px dashed green;
+  left: ${props => props.x1 * scaleFactor}px;
+  top: ${props => props.y1 * scaleFactor}px;
+  width: ${props => (props.x2 - props.x1) * scaleFactor}px;
+  height: ${props => (props.y2 - props.y1) * scaleFactor}px;
 `;
 
-const CustomForm = ({ questions, onSubmit }) => {
-  const [formData, setFormData] = useState({ date: new Date().toISOString() });
+function App() {
+  // Define the coordinates for the center
+  const center = {x: 660, y: 360};
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
+  // Define the coordinates for the region of interest
+  const region = {x1: 609, y1: 309, x2: 711, y2: 411};
 
   return (
-    <FormWrapper onSubmit={handleSubmit}>
-      <InputGroup>
-        <Label htmlFor="technician">Technician:</Label>
-        <TextInput name="technician" onChange={handleChange} />
-      </InputGroup>
-
-      <InputGroup>
-        <Label htmlFor="serialNumber">Serial Number:</Label>
-        <TextInput name="serialNumber" onChange={handleChange} />
-      </InputGroup>
-
-      {questions.map((question, index) => {
-        return (
-          <InputGroup key={index}>
-            <Label htmlFor={question.name}>{question.label}:</Label>
-            {(() => {
-              switch (question.type) {
-                case 'boolean':
-                  return (
-                    <BooleanInput
-                      name={question.name}
-                      onChange={handleChange}
-                    />
-                  );
-                case 'text':
-                  return (
-                    <TextInput
-                      name={question.name}
-                      onChange={handleChange}
-                    />
-                  );
-                case 'float':
-                  return (
-                    <FloatInput
-                      name={question.name}
-                      onChange={handleChange}
-                    />
-                  );
-                case 'integer':
-                  return (
-                    <IntegerInput
-                      name={question.name}
-                      onChange={handleChange}
-                    />
-                  );
-                default:
-                  return null;
-              }
-            })()}
-          </InputGroup>
-        );
-      })}
-
-      <input type="submit" value="Submit" />
-    </FormWrapper>
+    <Display>
+      <Mark x={center.x} y={center.y} />
+      <Region x1={region.x1} y1={region.y1} x2={region.x2} y2={region.y2} />
+    </Display>
   );
-};
+}
 
-export default CustomForm;
+export default App;
