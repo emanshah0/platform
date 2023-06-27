@@ -1,57 +1,17 @@
-import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import { Line } from 'react-chartjs-2';
-
-const App = ({ components }) => {
-  const printDiv = () => {
-    const printWindow = window.open('', '_blank');
-    const printContents = getPrintContents();
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print</title>
-        </head>
-        <body>
-          ${printContents}
-          <script type="text/javascript">
-            window.onload = function() {
-              window.print();
-              window.onafterprint = function() {
-                window.close();
-              };
-            };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-  };
-
-  const getPrintContents = () => {
-    return components.map(({ type: Component, props }, index) => {
-      if (Component === LineChart) {
-        const chartImage = convertLineChartToImage(props);
-        return `<div key=${index} className="component-wrapper">${chartImage}</div>`;
-      }
-      return ReactDOMServer.renderToStaticMarkup(
-        <div key={index} className="component-wrapper">
-          <Component {...props} />
-        </div>
-      );
-    }).join('');
-  };
-
   const convertLineChartToImage = (props) => {
-    const chartInstance = new Line(props.data, props.options);
-    const imageSrc = chartInstance.toBase64Image();
+    const canvasRef = useRef(null);
+
+    useEffect(() => {
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: props.data,
+          options: props.options,
+        });
+      }
+    }, [props.data, props.options]);
+
+    const imageSrc = canvasRef.current ? canvasRef.current.toDataURL() : '';
     return `<img src="${imageSrc}" alt="Line Chart" />`;
   };
-
-  return (
-    <div>
-      <button onClick={printDiv}>Print Page</button>
-    </div>
-  );
-};
-
-export default App;
