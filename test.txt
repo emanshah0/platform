@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { Chart } from 'chart.js';
+import { Line } from 'react-chartjs-2';
 
 const PrintButton = ({ components }) => {
   const printDiv = () => {
@@ -30,7 +30,7 @@ const PrintButton = ({ components }) => {
   const getPrintContents = () => {
     return components.map(({ type: Component, props }, index) => {
       if (Component === LineChart) {
-        const chartImage = convertLineChartToImage(props.chartRef);
+        const chartImage = convertLineChartToImage(props);
         return `<div key=${index} className="component-wrapper">${chartImage}</div>`;
       }
       return ReactDOMServer.renderToStaticMarkup(
@@ -41,16 +41,24 @@ const PrintButton = ({ components }) => {
     }).join('');
   };
 
-  const convertLineChartToImage = (chartRef) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: chartRef.current.chartInstance.data,
-      options: chartRef.current.chartInstance.options,
-    });
-    const imageSrc = canvas.toDataURL();
-    return `<img src="${imageSrc}" alt="Line Chart" />`;
+  const convertLineChartToImage = (props) => {
+    const chartRef = React.useRef(null);
+    const canvasRef = React.useRef(null);
+
+    React.useEffect(() => {
+      const chart = new Line(props.data, props.options);
+      chartRef.current = chart;
+    }, [props.data, props.options]);
+
+    React.useEffect(() => {
+      if (chartRef.current && canvasRef.current) {
+        const chartInstance = chartRef.current.chartInstance;
+        const imageSrc = chartInstance.toBase64Image();
+        canvasRef.current.src = imageSrc;
+      }
+    }, [chartRef.current]);
+
+    return <img ref={canvasRef} alt="Line Chart" />;
   };
 
   return (
