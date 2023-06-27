@@ -1,38 +1,67 @@
-const getPrintContents = () => {
-  return components.map((component, index) => {
-    if (component.type === LineGraph) {
-      const chartRef = React.createRef();
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import LineGraph from './LineGraph';
 
-      // Wait for the LineGraph component to be rendered in the DOM
-      const onLineGraphRender = () => {
-        const chartInstance = chartRef.current?.chartInstance;
+const PrintButton = ({ components }) => {
+  const printDiv = () => {
+    const printWindow = window.open('', '_blank');
+    const printContents = getPrintContents();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print</title>
+        </head>
+        <body>
+          ${printContents}
+          <script type="text/javascript">
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() {
+                window.close();
+              };
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
-        if (chartInstance) {
-          const imageSrc = getChartImage(chartInstance);
-          const imageElement = `<img src="${imageSrc}" alt="Line Graph" />`;
+  const getPrintContents = () => {
+    return components.map((component, index) => {
+      if (component.type === LineGraph) {
+        const chartRef = React.createRef();
+        const lineGraphProps = {
+          ...component.props,
+          chartRef: chartRef,
+        };
+        return getLineGraphImage(lineGraphProps);
+      }
+      return ReactDOMServer.renderToStaticMarkup(component);
+    }).join('');
+  };
 
-          const wrapperElement = document.createElement('div');
-          wrapperElement.innerHTML = imageElement;
-          return wrapperElement.firstChild.outerHTML;
-        }
-      };
-
-      return (
-        <div key={index} className="component-wrapper">
-          <LineGraph {...component.props} chartRef={chartRef} onRender={onLineGraphRender} />
-        </div>
-      );
-    }
-
-    return (
-      <div key={index} className="component-wrapper">
-        {ReactDOMServer.renderToStaticMarkup(component)}
+  const getLineGraphImage = (props) => {
+    const { chartRef, ...otherProps } = props;
+    const lineGraph = (
+      <div>
+        <LineGraph {...otherProps} chartRef={chartRef} />
+        <img src={getChartImage(chartRef)} alt="Line Graph" />
       </div>
     );
-  }).join('');
+    return ReactDOMServer.renderToStaticMarkup(lineGraph);
+  };
+
+  const getChartImage = (chartRef) => {
+    const canvas = chartRef.current.chartInstance.canvas;
+    return canvas.toDataURL();
+  };
+
+  return (
+    <div>
+      <button onClick={printDiv}>Print Page</button>
+    </div>
+  );
 };
 
-const getChartImage = (chartInstance) => {
-  const canvas = chartInstance.canvas;
-  return canvas.toDataURL();
-};
+export default PrintButton;
