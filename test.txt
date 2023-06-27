@@ -1,48 +1,21 @@
-import React from 'react';
-import styled from 'styled-components';
+  const getPrintContents = () => {
+    return components
+      .map(({ type: Component, props }, index) => {
+        if (Component === LineChart) {
+          const chartImage = convertLineChartToImage(props);
+          return `<div key=${index} className="component-wrapper">${chartImage}</div>`;
+        }
+        return ReactDOMServer.renderToStaticMarkup(
+          <div key={index} className="component-wrapper">
+            <Component {...props} />
+          </div>
+        );
+      })
+      .join('');
+  };
 
-// Scale factor
-const scaleFactor = 0.5;
-
-const Display = styled.div`
-  width: ${1380 * scaleFactor}px;
-  height: ${720 * scaleFactor}px;
-  position: relative;
-  border: 1px solid black;
-`;
-
-const Mark = styled.div`
-  width: 1px;
-  height: 1px;
-  background-color: red;
-  position: absolute;
-  left: ${props => props.x * scaleFactor}px;
-  top: ${props => props.y * scaleFactor}px;
-`;
-
-// This will represent the region of interest
-const Region = styled.div`
-  position: absolute;
-  border: 1px dashed green;
-  left: ${props => props.x1 * scaleFactor}px;
-  top: ${props => props.y1 * scaleFactor}px;
-  width: ${props => (props.x2 - props.x1) * scaleFactor}px;
-  height: ${props => (props.y2 - props.y1) * scaleFactor}px;
-`;
-
-function App() {
-  // Define the coordinates for the center
-  const center = {x: 660, y: 360};
-
-  // Define the coordinates for the region of interest
-  const region = {x1: 609, y1: 309, x2: 711, y2: 411};
-
-  return (
-    <Display>
-      <Mark x={center.x} y={center.y} />
-      <Region x1={region.x1} y1={region.y1} x2={region.x2} y2={region.y2} />
-    </Display>
-  );
-}
-
-export default App;
+  const convertLineChartToImage = (props) => {
+    const chartCanvas = ReactDOMServer.renderToStaticMarkup(<Line {...props} />);
+    const imageSrc = props.chartRef.current.chartInstance.toDataURL();
+    return `<img src="${imageSrc}" alt="Line Chart" />`;
+  };
