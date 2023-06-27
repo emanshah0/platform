@@ -1,17 +1,63 @@
-  const convertLineChartToImage = (props) => {
-    const canvasRef = useRef(null);
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { Chart } from 'chart.js';
 
-    useEffect(() => {
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: props.data,
-          options: props.options,
-        });
+const PrintButton = ({ components }) => {
+  const printDiv = () => {
+    const printWindow = window.open('', '_blank');
+    const printContents = getPrintContents();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print</title>
+        </head>
+        <body>
+          ${printContents}
+          <script type="text/javascript">
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() {
+                window.close();
+              };
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const getPrintContents = () => {
+    return components.map(({ type: Component, props }, index) => {
+      if (Component === LineChart) {
+        const chartImage = convertLineChartToImage(props.chartRef);
+        return `<div key=${index} className="component-wrapper">${chartImage}</div>`;
       }
-    }, [props.data, props.options]);
+      return ReactDOMServer.renderToStaticMarkup(
+        <div key={index} className="component-wrapper">
+          <Component {...props} />
+        </div>
+      );
+    }).join('');
+  };
 
-    const imageSrc = canvasRef.current ? canvasRef.current.toDataURL() : '';
+  const convertLineChartToImage = (chartRef) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: chartRef.current.chartInstance.data,
+      options: chartRef.current.chartInstance.options,
+    });
+    const imageSrc = canvas.toDataURL();
     return `<img src="${imageSrc}" alt="Line Chart" />`;
   };
+
+  return (
+    <div>
+      <button onClick={printDiv}>Print Page</button>
+    </div>
+  );
+};
+
+export default PrintButton;
