@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import LineGraph from './LineGraph';
 
@@ -43,17 +43,29 @@ const PrintButton = ({ components }) => {
 
   const getLineGraphImage = (props) => {
     const { chartRef, ...otherProps } = props;
-    const lineGraph = (
-      <div>
-        <LineGraph {...otherProps} chartRef={chartRef} />
-        <img src={getChartImage(chartRef)} alt="Line Graph" />
+
+    const onLineGraphRender = () => {
+      const chartInstance = chartRef.current?.chartInstance;
+
+      if (chartInstance) {
+        const imageSrc = getChartImage(chartInstance);
+        const imageElement = `<img src="${imageSrc}" alt="Line Graph" />`;
+
+        const wrapperElement = document.createElement('div');
+        wrapperElement.innerHTML = imageElement;
+        return wrapperElement.firstChild.outerHTML;
+      }
+    };
+
+    return (
+      <div key={otherProps.key} className="component-wrapper">
+        <LineGraph {...otherProps} chartRef={chartRef} onRender={onLineGraphRender} />
       </div>
     );
-    return ReactDOMServer.renderToStaticMarkup(lineGraph);
   };
 
-  const getChartImage = (chartRef) => {
-    const canvas = chartRef.current.chartInstance.canvas;
+  const getChartImage = (chartInstance) => {
+    const canvas = chartInstance.canvas;
     return canvas.toDataURL();
   };
 
