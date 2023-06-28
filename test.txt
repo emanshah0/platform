@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import styled, { css } from "styled-components";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import { boxShadow } from "../data";
 
 const Container = styled.div`
@@ -13,19 +13,13 @@ const Container = styled.div`
   border-width: 0px;
   border-radius: 5px;
   margin: 10px;
-  max-height: 280px;
   max-width: 650px;
+  max-height: 280px;
   overflow: auto;
-  ::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-  }
 
   @media print {
-    .scrollable-table {
-      overflow: visible;
-      height: auto;
-    }
+    overflow: visible !important;
+    max-height: none !important;
   }
 `;
 
@@ -38,11 +32,11 @@ const Table = styled.table`
 
   ${({ printMode }) =>
     printMode &&
-    css`
-      overflow: visible;
-      height: auto;
-      max-height: none;
-    `}
+    `
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  `}
 `;
 
 const TableHeader = styled.th`
@@ -81,6 +75,15 @@ const Title = styled.h2`
 
 function TableDisplay({ content, printMode }) {
   const [selectedRow, setSelectedRow] = useState(null);
+
+  useEffect(() => {
+    if (printMode) {
+      // Wait for rendering to complete before printing
+      setTimeout(() => {
+        window.print();
+      }, 0);
+    }
+  }, [printMode]);
 
   if (
     !content ||
