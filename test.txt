@@ -1,8 +1,66 @@
-import React, { useState } from 'react';
-import NewWindow from 'react-new-window';
+import React, { useEffect, useRef, useState } from "react";
+import LineGraph from "./lineGraph";
+import styled from "styled-components";
+import { boxShadow } from "../data";
+import NewWindow from "react-new-window";
 
-const PrintButton = ({ content }) => {
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  column-gap: 30px;
+`;
+
+const StyledObject = styled.div`
+  margin: 10px 10px;
+  width: 800px;
+`;
+
+const Button = styled.button`
+  background: linear-gradient(to bottom, #000000c1, #ac0722d1);
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  box-shadow: ${boxShadow.dark};
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-width: 0px;
+  border-radius: 10px;
+  font-size: 20px;
+  width: 140px;
+  z-index: 9999;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+  }
+  &:active {
+    transform: scale(1.01);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+  }
+`;
+
+const PrintButton = ({ components }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const newWindowRef = useRef(null);
+
+  useEffect(() => {
+    const handleUnload = () => {
+      newWindowRef.current = null;
+    };
+
+    if (newWindowRef.current) {
+      newWindowRef.current.addEventListener("unload", handleUnload);
+    }
+
+    return () => {
+      if (newWindowRef.current) {
+        newWindowRef.current.removeEventListener("unload", handleUnload);
+      }
+    };
+  }, []);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -13,18 +71,24 @@ const PrintButton = ({ content }) => {
   };
 
   const handlePrint = () => {
-    window.print();
+    if (newWindowRef.current) {
+      newWindowRef.current.print();
+    }
   };
 
   return (
-    <>
-      <button onClick={handleOpen}>Open Print View</button>
+    <div>
+      <Button onClick={handleOpen}>Open Print View</Button>
       {isOpen && (
-        <NewWindow onUnload={handleClose}>
-          {content}
-          <button onClick={handlePrint}>Print</button>
+        <NewWindow ref={newWindowRef} onUnload={handleClose}>
+          <Container>
+            <StyledObject>{components}</StyledObject>
+          </Container>
+          <Button onClick={handlePrint}>Print</Button>
         </NewWindow>
       )}
-    </>
+    </div>
   );
 };
+
+export default PrintButton;
