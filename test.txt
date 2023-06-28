@@ -1,94 +1,141 @@
-import React, { useEffect, useRef, useState } from "react";
-import LineGraph from "./lineGraph";
-import styled from "styled-components";
+import React, { useState } from "react";
+import styled, { css } from "styled-components";
 import { boxShadow } from "../data";
-import NewWindow from "react-new-window";
 
 const Container = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
-  column-gap: 30px;
-`;
-
-const StyledObject = styled.div`
-  margin: 10px 10px;
-  width: 800px;
-`;
-
-const Button = styled.button`
-  background: linear-gradient(to bottom, #000000c1, #ac0722d1);
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-  box-shadow: ${boxShadow.dark};
-  color: white;
-  font-weight: bold;
+  align-items: center;
   padding: 10px;
+  box-shadow: ${boxShadow.light};
+  border-color: rgba(0, 0, 0, 0);
   border-width: 0px;
-  border-radius: 10px;
-  font-size: 20px;
-  width: 140px;
-  z-index: 9999;
+  border-radius: 5px;
+  margin: 10px;
+  max-height: 280px;
+  max-width: 650px;
+  overflow: auto;
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  @media print {
+    .scrollable-table {
+      overflow: visible;
+      height: auto;
+    }
+  }
+`;
+
+const Table = styled.table`
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 10px;
+  row-gap: 2px;
+  overflow: auto;
+
+  ${({ printMode }) =>
+    printMode &&
+    css`
+      overflow: visible;
+      height: auto;
+      max-height: none;
+    `}
+`;
+
+const TableHeader = styled.th`
+  background: linear-gradient(to bottom, #000000c1, #0355179e);
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+`;
+
+const TableRow = styled.tr`
   cursor: pointer;
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
-    border-radius: 10px;
-  }
-  &:active {
-    transform: scale(1.01);
-    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.35);
-    border-radius: 10px;
   }
 `;
 
-const PrintButton = ({ components }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const newWindowRef = useRef(null);
+const TableCell = styled.td`
+  padding: 8px;
+`;
 
-  useEffect(() => {
-    const handleUnload = () => {
-      newWindowRef.current = null;
-    };
+const ValueCell = styled.div`
+  font-size: 14px;
+  text-align: center;
+`;
 
-    if (newWindowRef.current) {
-      newWindowRef.current.addEventListener("unload", handleUnload);
-    }
+const FieldCell = styled.div`
+  font-size: 14px;
+`;
 
-    return () => {
-      if (newWindowRef.current) {
-        newWindowRef.current.removeEventListener("unload", handleUnload);
-      }
-    };
-  }, []);
+const Title = styled.h2`
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+`;
 
-  const handleOpen = () => {
-    setIsOpen(true);
-  };
+function TableDisplay({ content, printMode }) {
+  const [selectedRow, setSelectedRow] = useState(null);
 
-  const handleClose = () => {
-    setIsOpen(false);
-  };
+  if (
+    !content ||
+    content.type !== "table" ||
+    content.data.rows.length === 0
+  ) {
+    return <div>No data available</div>;
+  }
 
-  const handlePrint = () => {
-    if (newWindowRef.current) {
-      newWindowRef.current.print();
-    }
+  const tableData = content.data.rows;
+  const fields = Object.keys(tableData[0]).filter((field) => field !== "id");
+
+  const handleRowClick = (id) => {
+    setSelectedRow(id);
   };
 
   return (
-    <div>
-      <Button onClick={handleOpen}>Open Print View</Button>
-      {isOpen && (
-        <NewWindow ref={newWindowRef} onUnload={handleClose}>
-          <Container>
-            <StyledObject>{components}</StyledObject>
-          </Container>
-          <Button onClick={handlePrint}>Print</Button>
-        </NewWindow>
-      )}
-    </div>
+    <Container>
+      <Title>{content.title}</Title>
+      <Table className="scrollable-table" printMode={printMode}>
+        <thead>
+          <tr>
+            {fields.map((field) => (
+              <TableHeader key={field}>{field.toUpperCase()}</TableHeader>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((item) => (
+            <TableRow
+              key={item.id}
+              onClick={() => handleRowClick(item.id)}
+              selected={selectedRow === item.id}
+            >
+              {fields.map((field) => (
+                <TableCell key={`${item.id}-${field}`}>
+                  {field === "Result" ? (
+                    <ValueCell
+                      style={{ color: item[field] ? "green" : "red" }}
+                    >
+                      {item[field] ? "PASS" : "FAIL"}
+                    </ValueCell>
+                  ) : field === "Value" || field === "Expected" ? (
+                    <ValueCell>{item[field].toString()}</ValueCell>
+                  ) : (
+                    <FieldCell>{item[field]}</FieldCell>
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </tbody>
+      </Table>
+    </Container>
   );
-};
+}
 
-export default PrintButton;
+export default TableDisplay;
